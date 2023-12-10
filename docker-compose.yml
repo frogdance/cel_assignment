@@ -1,0 +1,25 @@
+version: "3.7"
+services:
+  database:
+    image: postgres
+    container_name: cel_database
+    restart: always
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - database_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - cel_intel_network
+        
+
+
+volumes:
+  database_data:
+
+networks:
+  cel_intel_network:
+    driver: bridge
