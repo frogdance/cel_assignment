@@ -1,6 +1,6 @@
 # environment
 .venv
-# .env
+.env
 
 # python execute file
 *__pyc__
