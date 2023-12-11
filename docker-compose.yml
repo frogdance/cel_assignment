@@ -14,11 +14,28 @@ services:
       - 5432:5432
     networks:
       - cel_intel_network
-        
 
+  api:
+    container_name: api
+    build:
+      context: ./api
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      HOST: database
+    depends_on:
+      - database
+    networks:
+      - cel_intel_network
 
 volumes:
   database_data:
+  api_data:
 
 networks:
   cel_intel_network:
