@@ -21,7 +21,18 @@ async def get_items(
         item_fat_content: Annotated[list[str] | None, Query(title='list of content of items (low fat or regular)')] = None,
         item_type: Annotated[list[str] | None, Query(title='list of category of items')] = None,
     ) -> list[ItemSchema]:
-    """Return a list of all items
+    """
+    Query Item.
+
+    Parameters:
+    - item_identifier: List string of item id.
+    - item_weight_min: Float of min item weight.
+    - item_weight_max: FLoat of max item weight.
+    - item_fat_content: List string of item fat content.
+    - item_type: List string of item type.
+
+    Returns:
+    list of Item.
     """
     query = db.query(Item)
 

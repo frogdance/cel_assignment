@@ -17,11 +17,28 @@ async def get_items(
         db: Session = Depends(get_db),
         item_identifier: Annotated[list[str] | None, Query(title='the id of item to get')] = None,
         outlet_identifier: Annotated[list[int] | None, Query(title='the id of outlet to get')] = None,
-        item_visibility: Annotated[float | None, Query(title='percentage of product display on total store area')] = None,
-        item_mrp: Annotated[float | None, Query(title='maximum retail price')] = None,
-        item_outlet_sales: Annotated[float | None, Query(title='sale of product')] = None,
+        item_visibility_min: Annotated[float | None, Query(title='min percentage of product display on total store area')] = None,
+        item_visibility_max: Annotated[float | None, Query(title='max percentage of product display on total store area')] = None,
+        item_mrp_min: Annotated[float | None, Query(title='min retail price')] = None,
+        item_mrp_max: Annotated[float | None, Query(title='max retail price')] = None,
+        item_outlet_sales_min: Annotated[float | None, Query(title='min sale of product')] = None,
+        item_outlet_sales_max: Annotated[float | None, Query(title='max sale of product')] = None,
     ) -> list[SaleReportSchema]:
-    """Return a list of all outlets
+    """
+    Query Sale Report.
+
+    Parameters:
+    - item_identifier: List string of item id.
+    - outlet_identifier: List string of outlet id.
+    - item_visibility_min: Float of min item visibility.
+    - item_visibility_max: Float of max item visibility.
+    - item_mrp_min: Float of min item mrp.
+    - item_mrp_max: Float of max item mrp.
+    - item_outlet_sales_min: Float of min item outlet sales.
+    - item_outlet_sales_max: Float of max item outlet sales.
+
+    Returns:
+    list of Sale Report.
     """
     query = db.query(SaleReport)
 
@@ -32,14 +49,23 @@ async def get_items(
     if outlet_identifier is not None:
         query = query.filter(SaleReport.outlet_identifier.in_(outlet_identifier))
 
-    if item_visibility is not None:
-        query = query.filter(SaleReport.item_visibility >= item_visibility)
+    if item_visibility_min is not None:
+        query = query.filter(SaleReport.item_visibility <= item_visibility_min)
 
-    if item_mrp:
-        query = query.filter(SaleReport.item_mrp >= item_mrp)
+    if item_visibility_max is not None:
+        query = query.filter(SaleReport.item_visibility >= item_visibility_max)
 
-    if item_outlet_sales:
-        query = query.filter(SaleReport.item_outlet_sales >= item_outlet_sales)
+    if item_mrp_min is not None:
+        query = query.filter(SaleReport.item_mrp <= item_mrp_min)
+
+    if item_mrp_max is not None:
+        query = query.filter(SaleReport.item_mrp <= item_mrp_max)
+
+    if item_outlet_sales_min is not None:
+        query = query.filter(SaleReport.item_outlet_sales <= item_outlet_sales_min)
+
+    if item_outlet_sales_max is not None:
+        query = query.filter(SaleReport.item_outlet_sales >= item_outlet_sales_max)
 
     # Execute the query and return the results
     result = query.all()

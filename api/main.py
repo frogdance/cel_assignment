@@ -1,6 +1,4 @@
 from fastapi import FastAPI
-import uvicorn
-
 from routers import item, outlet, sale_report
 
 app = FastAPI()

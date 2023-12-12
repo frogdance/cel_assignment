@@ -21,7 +21,18 @@ async def get_items(
         outlet_location_type: Annotated[list[str] | None, Query(title='list of content of outlets (low fat or regular)')] = None,
         outlet_type: Annotated[list[str] | None, Query(title='list of category of outlets')] = None,
     ) -> list[OutletSchema]:
-    """Return a list of all outlets
+    """
+    Query Outlet.
+
+    Parameters:
+    - outlet_identifier: List string of outlet id.
+    - outlet_establishment_year: List integer of year establish.
+    - outlet_size: List string of outlet size.
+    - outlet_location_type: List string of outlet location type.
+    - outlet_type: List string of outlet type.
+
+    Returns:
+    list of Outlet.
     """
     query = db.query(Outlet)
 
