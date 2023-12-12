@@ -1,5 +1,6 @@
 version: "3.7"
 services:
+# ---
   database:
     image: postgres
     container_name: database
@@ -47,12 +48,12 @@ services:
       - api
     networks:
       - cel_intel_network
-
+# ---
 volumes:
   database_data:
   api_data:
   dashboard_data:
-
+# ---
 networks:
   cel_intel_network:
     driver: bridge

@@ -16,4 +16,5 @@ def request(params = {}, path = '') -> list[dict]:
     Returns:
     list of Sale Report.
     """
-    return json.loads(requests.get(api_endpoint + path, params=params).text)
+    response = requests.get(api_endpoint + path, params=params).text
+    return json.loads(response)

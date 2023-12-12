@@ -76,7 +76,7 @@ with st.sidebar:
                 'outlet_type': st.session_state['outlet_type_filter']
             })
             st.session_state['sale_reports'] = request(path='sale_reports', params={
-                'item_identifier': st.session_state['outlet_identifier_filter'],
+                'item_identifier': st.session_state['item_identifier_filter'],
                 'outlet_identifier': st.session_state['outlet_identifier_filter'],
                 'item_visibility_min': st.session_state['item_visibility_filter'][0],
                 'item_visibility_max': st.session_state['item_visibility_filter'][1],
@@ -86,31 +86,84 @@ with st.sidebar:
                 'item_outlet_sales_max': st.session_state['item_outlet_sales_filter'][1]
             })
 
-# dataframe 
-df_item = pd.DataFrame(st.session_state['items'])
-df_outlet = pd.DataFrame(st.session_state['outlets'])
-df_sale_report = pd.DataFrame(st.session_state['sale_reports'])
-df = pd.merge(df_sale_report, df_item, on='item_identifier', how='left')
-df = pd.merge(df, df_outlet, on='outlet_identifier', how='left')
-df.sort_values(by=['item_outlet_sales'], ascending=True)
+# dataframe
+try:
+    df_item = pd.DataFrame(st.session_state['items'])
+    df_outlet = pd.DataFrame(st.session_state['outlets'])
+    df_sale_report = pd.DataFrame(st.session_state['sale_reports'])
+    df = pd.merge(df_sale_report, df_item, on='item_identifier', how='inner')
+    df = pd.merge(df, df_outlet, on='outlet_identifier', how='inner')
+    df.sort_values(by=['item_outlet_sales'], ascending=True)
+except:
+    print('fail')
+    df = pd.DataFrame(columns=["item_identifier","outlet_identifier","item_visibility","item_mrp","item_outlet_sales","item_weight","item_fat_content","item_type","outlet_establishment_year","outlet_size","outlet_location_type","outlet_type"])
 
 # tab
-overview, item, outlet, sale_report = st.tabs(["Overview", "Item", "Outlet", "Sale Report"])
+overview, item, outlet = st.tabs(["Overview", "Item", "Outlet"])
 with overview:
-    st.metric("Sales", df['item_outlet_sales'].sum())
-    st.metric("Num outlet", df['outlet_identifier'].nunique())
-    st.metric("Num item", df['item_identifier'].nunique())
+    # row1
+    r1_col1, r1_col2, r1_col3 = st.columns(3)
+    with r1_col1:
+        st.metric("Sales", "${:,.0f}".format(df['item_outlet_sales'].sum()))
+    with r1_col2:
+        st.metric("Num outlet", df['outlet_identifier'].nunique())
+    with r1_col3:
+        st.metric("Num item", df['item_identifier'].nunique())
+    # row2
+    r2_col1, r2_col2 = st.columns(2)
+    with r2_col1:
+        row2_pie1 = px.pie(df, values='item_outlet_sales', names='outlet_type', title='Sales by outlet type')
+        st.plotly_chart(row2_pie1, theme="streamlit", use_container_width=True)
+    with r2_col2:
+        row2_pie2 = px.pie(df, values='item_outlet_sales', names='item_type', title='Sales by Item Type')
+        st.plotly_chart(row2_pie2, theme="streamlit", use_container_width=True)
+    # row3
+    row3_hist = px.histogram(df.sort_values(by=['item_outlet_sales'])[-10:], x='outlet_identifier', y='item_outlet_sales', title='Sales by Outlet')
+    st.plotly_chart(row3_hist, theme="streamlit", use_container_width=True)
+    # row4
+    row4_hist = px.histogram(df.sort_values(by=['item_outlet_sales'])[-10:], x='item_identifier', y='item_outlet_sales', title='Sales by Item')
+    st.plotly_chart(row4_hist, theme="streamlit", use_container_width=True)
 
 with item:
+    # row1
     col1, col2 = st.columns(2)
     with col1:
-        item1_fig = px.bar(df, x='item_outlet_sales', y='item_type')
-        st.plotly_chart(item1_fig, theme="streamlit", use_container_width=True)
+        col1_hist1 = px.pie(df, values='item_outlet_sales', names='item_fat_content', title='Sales by Item Fat Content')
+        st.plotly_chart(col1_hist1, theme="streamlit", use_container_width=True)
     with col2:
-        st.bar_chart(df, x='item_type', y='item_outlet_sales')
+        col1_hist2 = px.pie(df, values='item_outlet_sales', names='item_type', title='Sales by Item Type')
+        st.plotly_chart(col1_hist2, theme="streamlit", use_container_width=True)
+    # row2
+    row2_hist = px.bar(df.sort_values(by=['item_outlet_sales'])[-10:], x='outlet_type', y='item_outlet_sales', color='outlet_size', title='Top 10 Sales by Item')
+    st.plotly_chart(row2_hist, theme="streamlit", use_container_width=True)
+    # row3
+    row3_hist = px.histogram(df, x='item_weight', y='item_outlet_sales', color='item_fat_content', marginal='rug', title='Sales by Item Type and Item Weight')
+    st.plotly_chart(row3_hist, theme="streamlit", use_container_width=True)
+    # row4
+    row4_hist = px.histogram(df, x='item_weight', y='item_outlet_sales', color='item_fat_content', marginal='rug', title='Sales by Item Type and Item Weight')
+    st.plotly_chart(row3_hist, theme="streamlit", use_container_width=True)
 
 with outlet:
-    st.dataframe(df_outlet)
-
-with sale_report:
-    st.dataframe(df_sale_report)
+    # row1
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        col1_hist = px.pie(df, values='item_outlet_sales', names='outlet_type', title='Sales by Outlet Type')
+        st.plotly_chart(col1_hist, theme="streamlit", use_container_width=True)
+    with col2:
+        col2_pie1 = px.pie(df, values='item_outlet_sales', names='outlet_size', title='Sales by Outlet Size')
+        st.plotly_chart(col2_pie1, theme="streamlit", use_container_width=True)
+    with col3:
+        col3_pie2 = px.pie(df, values='item_outlet_sales', names='outlet_location_type', title='Sales by Outlet Location Type')
+        st.plotly_chart(col3_pie2, theme="streamlit", use_container_width=True)
+    # row2
+    row2_hist = px.bar(df.sort_values(by=['item_outlet_sales'])[-10:], x='outlet_type', y='item_outlet_sales', color='outlet_size', title='Sales by Outlet type and size')
+    st.plotly_chart(row2_hist, theme="streamlit", use_container_width=True)
+    # row3
+    row3_hist = px.bar(df.sort_values(by=['item_outlet_sales'])[-10:], x='outlet_location_type', y='item_outlet_sales', color='outlet_size', title='Sales by Outlet location and size')
+    st.plotly_chart(row3_hist, theme="streamlit", use_container_width=True)
+    # row4
+    row4_hist = px.histogram(df, x='item_visibility', y='item_outlet_sales', color='outlet_identifier', marginal='rug', title='Sales by Outlet and Item Visibility')
+    st.plotly_chart(row4_hist, theme="streamlit", use_container_width=True)
+    # row5
+    row5_hist = px.histogram(df, x='item_mrp', y='item_outlet_sales', color='outlet_identifier', marginal='rug', title='Sales by Outlet and Item mrp')
+    st.plotly_chart(row5_hist, theme="streamlit", use_container_width=True)
