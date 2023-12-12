@@ -4,7 +4,19 @@ import plotly.express as px
 
 from utils import request
 
-if 'control_panel_data' not in st.session_state:
+st.set_page_config(
+    page_title="Dashboard",
+    page_icon="🏠",
+    layout="wide"
+)
+
+def clear_cache():
+    st.toast('No data, please try again')
+    keys = list(st.session_state.keys())
+    for key in keys:
+        st.session_state.pop(key)
+
+if 'items' not in st.session_state:
     st.session_state['items'] = request(path='items')
     st.session_state['outlets'] = request(path='outlets')
     st.session_state['sale_reports'] = request(path='sale_reports')
@@ -25,12 +37,6 @@ if 'control_panel_data' not in st.session_state:
     st.session_state['item_visibility'] = [item['item_visibility'] for item in st.session_state['sale_reports']]
     st.session_state['item_mrp'] = [item['item_mrp'] for item in st.session_state['sale_reports']]
     st.session_state['item_outlet_sales'] = [item['item_outlet_sales'] for item in st.session_state['sale_reports']]
-
-st.set_page_config(
-    page_title="Dashboard",
-    page_icon="🏠",
-    layout="wide"
-)
 
 with st.sidebar:
     st.title("**CONTROL PANEL**")
@@ -85,6 +91,7 @@ with st.sidebar:
                 'item_outlet_sales_min': st.session_state['item_outlet_sales_filter'][0],
                 'item_outlet_sales_max': st.session_state['item_outlet_sales_filter'][1]
             })
+            st.toast('Successed!!')
 
 # dataframe
 try:
@@ -95,8 +102,9 @@ try:
     df = pd.merge(df, df_outlet, on='outlet_identifier', how='inner')
     df.sort_values(by=['item_outlet_sales'], ascending=True)
 except:
-    print('fail')
-    df = pd.DataFrame(columns=["item_identifier","outlet_identifier","item_visibility","item_mrp","item_outlet_sales","item_weight","item_fat_content","item_type","outlet_establishment_year","outlet_size","outlet_location_type","outlet_type"])
+    # df = pd.DataFrame(columns=["item_identifier","outlet_identifier","item_visibility","item_mrp","item_outlet_sales","item_weight","item_fat_content","item_type","outlet_establishment_year","outlet_size","outlet_location_type","outlet_type"])
+    clear_cache()
+    st.rerun()
 
 # tab
 overview, item, outlet = st.tabs(["Overview", "Item", "Outlet"])
