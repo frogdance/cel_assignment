@@ -1,4 +1,4 @@
-# CEL interview take home asignment
+# CEL interview take home assignment
 
 ## Introduction
 
@@ -26,6 +26,11 @@ All port are mapped to localhost:
 
    ```bash
    docker-compose up -d
+   ```
+   To shutdown app, perform the following actions:
+
+   ```bash
+   docker-compose down
    ```
 1. **Step 2: Import data**
     *You just need run this on the first time to import data to database.*
