@@ -4,6 +4,8 @@
 
 Welcome to my repo. To run this app successfully, please follow the instruction below.
 
+--> to play with kubernetes, go to `/cluster`
+
 ## Prerequisites
 
 Before you begin, make sure you have the following:
@@ -13,7 +15,7 @@ Before you begin, make sure you have the following:
 - Python 3.11
 - Jupyter environment to run notebook
 
-All port are mapped to localhost:
+## when you run docker-compose, all port are mapped to localhost:
 
 - database: `localhost:5432`
 - api: `localhost:8000`

@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cel-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cel-api
+  template:
+    metadata:
+      labels:
+        app: cel-api
+    spec:
+      containers:
+      - name: cel-api
+        image: frogdance/cel-api:lastest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: database-secrets
+              key: POSTGRES_DB
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: database-secrets
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: database-secrets
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: database-config
+              key: POSTGRES_HOST
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cel-api-service
+spec:
+  selector:
+    app: cel-api
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000

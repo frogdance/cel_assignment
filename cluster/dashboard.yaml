@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cel-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cel-dashboard
+  template:
+    metadata:
+      labels:
+        app: cel-dashboard
+    spec:
+      containers:
+      - name: cel-dashboard
+        image: frogdance/cel-intelligence:lastest
+        ports:
+        - containerPort: 8501
+        env:
+        - name: API_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: api-config
+              key: API_ENDPOINT
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cel-dashboard-service
+spec:
+  selector:
+    app: cel-dashboard
+  ports:
+  - protocol: TCP
+    port: 8501
+    targetPort: 8501
