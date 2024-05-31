@@ -35,6 +35,7 @@ spec:
         app: postgresql
         name: cel-db   # Add a name to the pod
     spec:
+      priorityClassName: high-priority
       containers:
       - name: postgresql
         image: frogdance/cel-db:lastest

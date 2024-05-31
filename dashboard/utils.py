@@ -2,8 +2,10 @@ import requests
 import os
 import json
 
-# api_endpoint = "http://localhost:8000"
 api_endpoint = "http://" + os.getenv("API_ENDPOINT") + ":8000/"
+
+if api_endpoint == None:
+    api_endpoint = "http://localhost:8000"
 
 def request(params = {}, path = '') -> list[dict]:
     """

@@ -1,0 +1,32 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+  - role: worker
+    kubeadmConfigPatches:
+      - |
+        apiVersion: kubeadm.k8s.io/v1beta2
+        kind: JoinConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            max-pods: "2"
+          kubeReserved:
+            cpu: "1m"
+            memory: "256Mi"
+          systemReserved:
+            cpu: "1m"
+            memory: "256Mi"
+  - role: worker
+    kubeadmConfigPatches:
+      - |
+        apiVersion: kubeadm.k8s.io/v1beta2
+        kind: JoinConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            max-pods: "2"
+          kubeReserved:
+            cpu: "1m"
+            memory: "256Mi"
+          systemReserved:
+            cpu: "1m"
+            memory: "256Mi"

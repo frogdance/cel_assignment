@@ -12,6 +12,7 @@ spec:
       labels:
         app: cel-api
     spec:
+      priorityClassName: medium-priority
       containers:
       - name: cel-api
         image: frogdance/cel-api:lastest

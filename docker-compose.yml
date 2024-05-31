@@ -12,7 +12,7 @@ services:
     volumes:
       - database_data:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - "5432:5432"
     networks:
       - cel_intel_network
 # ---

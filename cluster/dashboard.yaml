@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: cel-dashboard
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: cel-dashboard
@@ -12,6 +12,7 @@ spec:
       labels:
         app: cel-dashboard
     spec:
+      priorityClassName: low-priority
       containers:
       - name: cel-dashboard
         image: frogdance/cel-intelligence:lastest
