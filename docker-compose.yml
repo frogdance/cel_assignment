@@ -43,7 +43,7 @@ services:
     volumes:
       - .:/dashboard_data
     environment:
-      API_ENDPOINT: http://api:8000/
+      API_ENDPOINT: api
     depends_on:
       - api
     networks:
